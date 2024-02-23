@@ -29,10 +29,7 @@ jobs:
       REPO_NAME: $(repoName)
       BRANCH_NAME: $(branchName)
     continueOnError: false
-  - task: UsePythonVersion@0
-    inputs:
-        versionSpec: '$(pythonVersion)'
-    displayName: 'Use Python $(pythonVersion)'
+
   
   - script: |
         python -m venv antenv
