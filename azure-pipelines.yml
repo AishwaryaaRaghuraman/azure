@@ -1,0 +1,70 @@
+parameters:
+- name: gitUsername
+  type: string
+  default: AishwaryaaRaghuraman
+- name: repoName
+  type: string
+  default: azure
+- name: branchName
+  type: string
+  default: main
+
+
+trigger:
+- main
+
+variables: 
+  pythonVersion: '3.7'
+
+jobs:
+- job: Build 
+  displayName: 'Build Python Application'
+  pool: Default
+ 
+  steps:
+  - script: echo "Git Clone"
+    displayName: 'Git Clone'
+    env:
+      GIT_USERNAME: $(gitUsername)
+      REPO_NAME: $(repoName)
+      BRANCH_NAME: $(branchName)
+    continueOnError: false
+  - task: UsePythonVersion@0
+    inputs:
+        versionSpec: '$(pythonVersion)'
+    displayName: 'Use Python $(pythonVersion)'
+  
+  - script: |
+        python -m venv antenv
+        source antenv/bin/activate
+        python -m pip install --upgrade pip
+        pip install setup
+        pip install -r requirements.txt
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    displayName: "Install requirements"
+   
+  - script: |
+      echo "Running SonarQube Scan"
+      sonar-scanner.bat -D"sonar.projectKey=$(projectkey)" -D"sonar.sources=." -D"sonar.host.url=$(SONAR_URL)" -D"sonar.token=$(SONAR_TOKEN)" 
+    displayName: 'Run SonarQube Scanning'
+
+  # - task: PublishPipelineArtifact@1
+  #   inputs:
+  #     targetPath: '$(Pipeline.Workspace)'
+  #     artifact: 'build-artifact'
+  #     publishLocation: 'pipeline'
+
+  - task: ArchiveFiles@2
+    displayName: 'Archive files'
+    inputs:
+          rootFolderOrFile: '$(projectRoot)'
+          includeRootFolder: false
+          archiveType: zip
+          archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+          replaceExistingArchive: true
+          
+  - task: PublishBuildArtifacts@1
+    inputs:
+        pathToPublish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+        artifactName: Python
+
