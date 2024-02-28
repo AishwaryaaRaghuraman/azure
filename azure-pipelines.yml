@@ -52,17 +52,17 @@ jobs:
     #     artifact: 'build-artifact'
     #     publishLocation: 'pipeline'
     
-  - task: ArchiveFiles@2
-    displayName: 'Archive files'
-    inputs:
-            rootFolderOrFile: '$(projectRoot)'
-            includeRootFolder: false
-            archiveType: zip
-            archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-            replaceExistingArchive: true
+  # - task: ArchiveFiles@2
+  #   displayName: 'Archive files'
+  #   inputs:
+  #           rootFolderOrFile: '$(projectRoot)'
+  #           includeRootFolder: false
+  #           archiveType: zip
+  #           archiveFile: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+  #           replaceExistingArchive: true
             
-  - task: PublishBuildArtifacts@1
-    inputs:
-          pathToPublish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-          artifactName: Python
+  # - task: PublishBuildArtifacts@1
+  #   inputs:
+  #         pathToPublish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
+  #         artifactName: Python
 
